@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015/09/12 15:02:52.000.885,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2015/09/12 15:03:22.000.908,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\Unit2.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uPrincipal.pas</Transaction>
+    <Transaction>2015/09/12 15:03:22.000.908,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\Unit2.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uPrincipal.dfm</Transaction>
+    <Transaction>2015/09/12 15:03:28.000.633,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\Project2.dproj=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\prjCestas.dproj</Transaction>
+    <Transaction>2015/10/01 12:13:49.077,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 12:19:38.145,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmMasterCad.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 12:19:38.145,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmMasterCad.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/01 12:21:00.764,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 12:22:47.561,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uDM.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/01 12:22:47.561,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uDM.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 15:11:21.852,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 15:23:51.609,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmClientes.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/01 15:23:51.609,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmClientes.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/01 21:21:17.795,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 00:38:03.098,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmMercadorias.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 00:38:03.098,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmMercadorias.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/02 02:41:22.656,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 02:45:05.559,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmCidades.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 02:45:05.559,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmCidades.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/02 03:07:31.028,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 03:08:56.254,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmRelatorios.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+    <Transaction>2015/10/02 03:08:56.254,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmRelatorios.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 13:56:02.273,=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 14:37:55.063,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmVendas.pas=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.pas</Transaction>
+    <Transaction>2015/10/02 14:37:55.063,C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\uFrmVendas.dfm=C:\Users\Ninja\Documents\Embarcadero\Studio\Projects\iramar\Unit1.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,27 @@
+CRUD Vendas:
+
+	cadastrar nova venda.
+	alterar venda.
+	gravar nova venda.
+	cancelar operação de cadastro.
+	excluir cadastro (cancelar venda) (apenas se não tiver parcela recebida).
+
+
+Operações Vendas:
+
+	adicionar mercadoria.
+	remover mercadoria.
+	quantidade de mercadoria.
+	ajuste em mercadoria.
+	ajuste na venda total.
+	
+	receber à vista.
+	parcelar venda.
+	cancelar venda.
+
+Operações Parcelas:
+
+	ajustar valor.
+	receber parcela.
+	cancelar recebimento.
+	
