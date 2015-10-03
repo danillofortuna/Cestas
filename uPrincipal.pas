@@ -21,6 +21,7 @@ type
     procedure btnMercadoriasClick(Sender: TObject);
     procedure btnCidadeClick(Sender: TObject);
     procedure btnRelatóriosClick(Sender: TObject);
+    procedure btnVendasClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,7 +34,8 @@ var
 implementation
 
 uses
-  uFrmClientes, uFrmMercadorias, uFrmCidades, uFrmRelatorios;
+  uFrmClientes, uFrmMercadorias, uFrmCidades, uFrmRelatorios,
+  uFrmVendas;
 
 {$R *.dfm}
 
@@ -72,6 +74,15 @@ begin
   end;
   frmRelatorios.BringToFront;
 
+end;
+
+procedure TfrmPrincipal.btnVendasClick(Sender: TObject);
+begin
+  if frmVendas = nil then
+  begin
+    frmVendas := TfrmVendas.create(Self);
+  end;
+  frmVendas.BringToFront;
 end;
 
 end.

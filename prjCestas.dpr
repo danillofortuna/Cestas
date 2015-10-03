@@ -9,7 +9,10 @@ uses
   uFrmMercadorias in 'uFrmMercadorias.pas' {frmMercadorias},
   uFrmCidades in 'uFrmCidades.pas' {frmCidades},
   uFrmRelatorios in 'uFrmRelatorios.pas' {frmRelatorios},
-  uFrmVendas in 'uFrmVendas.pas' {Form1};
+  uFrmVendas in 'uFrmVendas.pas' {frmVendas},
+  uFrmMasterPes in 'uFrmMasterPes.pas' {frmMasterPes},
+  uFrmPesClientes in 'uFrmPesClientes.pas' {frmPesClientes},
+  uFuncoes in 'uFuncoes.pas';
 
 {$R *.res}
 
@@ -18,6 +21,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TfrmPrincipal, frmPrincipal);
-  Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

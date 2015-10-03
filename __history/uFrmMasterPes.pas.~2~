@@ -1,0 +1,56 @@
+unit uFrmMasterPes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids,
+  Vcl.DBGrids, uDM;
+
+type
+  TfrmMasterPes = class(TForm)
+    pnlTitulo: TPanel;
+    grdPesquisa: TDBGrid;
+    pnlPesquisa: TPanel;
+    lblPesquisar: TLabel;
+    lblPesCodigo: TLabel;
+    edtPesCodigo: TEdit;
+    qryMaster: TFDQuery;
+    dsMaster: TDataSource;
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure preencheRetorno(id : Integer; texto: string);
+  private
+    { Private declarations }
+  public
+    id : Integer;
+    texto : string;
+
+    { Public declarations }
+  end;
+
+var
+  frmMasterPes: TfrmMasterPes;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmMasterPes.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if ((Key = #13) and (activeControl <> grdPesquisa)) then
+  begin
+    Perform(WM_NEXTDLGCTL,0,0);
+    Key := #0;
+  end;
+end;
+
+procedure TfrmMasterPes.preencheRetorno(id : Integer; texto: string);
+begin
+  self.id := id;
+  Self.texto := texto;
+end;
+
+end.

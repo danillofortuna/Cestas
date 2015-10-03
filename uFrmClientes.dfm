@@ -9,14 +9,15 @@ inherited frmClientes: TfrmClientes
   inherited pnlTitulo: TPanel
     Width = 748
     Caption = 'Clientes'
-    ExplicitWidth = 116
+    ExplicitWidth = 748
     inherited btnFechar: TSpeedButton
       Left = 701
+      ExplicitLeft = 701
     end
   end
   inherited pnlPesquisa: TPanel
     Width = 748
-    ExplicitWidth = 116
+    ExplicitWidth = 748
     object lblPesNome: TLabel [2]
       Left = 211
       Top = 9
@@ -27,7 +28,7 @@ inherited frmClientes: TfrmClientes
     inherited pnlBtnPesquisar: TPanel
       Left = 677
       TabOrder = 2
-      ExplicitLeft = 45
+      ExplicitLeft = 677
     end
     object edtPesNome: TEdit
       Left = 254
@@ -80,12 +81,13 @@ inherited frmClientes: TfrmClientes
   end
   inherited pnlBotoes: TPanel
     Width = 748
-    ExplicitWidth = 116
+    ExplicitWidth = 748
   end
   inherited pnlDados: TPanel
     Width = 748
     Height = 264
-    ExplicitWidth = 116
+    ExplicitWidth = 748
+    ExplicitHeight = 264
     object lblCodigo: TLabel
       Left = 18
       Top = 6
@@ -174,7 +176,6 @@ inherited frmClientes: TfrmClientes
       DataSource = dsMaster
       KeyField = 'id'
       ListField = 'nome'
-      ListFieldIndex = 1
       ListSource = dsCidades
       TabOrder = 4
     end

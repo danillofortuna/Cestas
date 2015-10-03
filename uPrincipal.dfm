@@ -96,6 +96,7 @@
       Align = alLeft
       Caption = '&Vendas'
       Flat = True
+      OnClick = btnVendasClick
       ExplicitLeft = 211
       ExplicitTop = 6
     end

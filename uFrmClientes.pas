@@ -44,6 +44,7 @@ type
     procedure restauraSQL; override;
     procedure actPesquisarExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -106,6 +107,12 @@ begin
   inherited;
   edtPesNome.Clear;
   edtPesCodigo.Clear;
+end;
+
+procedure TfrmClientes.btn1Click(Sender: TObject);
+begin
+  inherited;
+  lcbCidade.KeyValue := lcbCidade.KeyValue+1;
 end;
 
 procedure TfrmClientes.btnPesquisarClick(Sender: TObject);
