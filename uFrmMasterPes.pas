@@ -69,6 +69,8 @@ end;
 procedure TfrmMasterPes.FormShow(Sender: TObject);
 begin
   centralizarForm(self);
+  qryMaster.Open();
+  edtPesCodigo.SetFocus;
 end;
 
 procedure TfrmMasterPes.grdPesquisaDblClick(Sender: TObject);

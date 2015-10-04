@@ -1,8 +1,17 @@
 inherited frmPesClientes: TfrmPesClientes
   Caption = ''
+  ClientHeight = 260
+  ClientWidth = 485
+  ExplicitWidth = 485
+  ExplicitHeight = 260
   PixelsPerInch = 96
   TextHeight = 13
+  inherited pnlTitulo: TPanel
+    Width = 485
+  end
   inherited grdPesquisa: TDBGrid
+    Width = 485
+    Height = 203
     Columns = <
       item
         Expanded = False
@@ -44,6 +53,7 @@ inherited frmPesClientes: TfrmPesClientes
       end>
   end
   inherited pnlPesquisa: TPanel
+    Width = 485
     OnExit = pnlPesquisaExit
     object lblPesNome: TLabel [2]
       Left = 211
@@ -62,7 +72,6 @@ inherited frmPesClientes: TfrmPesClientes
     end
   end
   inherited qryMaster: TFDQuery
-    Active = True
     SQL.Strings = (
       'SELECT C.id,'
       '       C.nome,'
@@ -79,6 +88,7 @@ inherited frmPesClientes: TfrmPesClientes
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object strngfldMasternome: TStringField
       DisplayWidth = 120
@@ -125,12 +135,8 @@ inherited frmPesClientes: TfrmPesClientes
     end
   end
   inherited actlstPesquisa: TActionList
-    inherited actRetornar: TAction
-      OnExecute = actRetornarExecute
-    end
     inherited actCancelar: TAction
       ShortCut = 27
-      OnExecute = actCancelarExecute
     end
   end
 end

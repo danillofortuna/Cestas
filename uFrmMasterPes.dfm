@@ -33,8 +33,6 @@ object frmMasterPes: TfrmMasterPes
     ParentBackground = False
     ParentFont = False
     TabOrder = 0
-    ExplicitLeft = -304
-    ExplicitWidth = 767
   end
   object grdPesquisa: TDBGrid
     Left = 0
@@ -63,8 +61,6 @@ object frmMasterPes: TfrmMasterPes
     Alignment = taLeftJustify
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = -304
-    ExplicitWidth = 767
     object lblPesquisar: TLabel
       Left = 5
       Top = 0
@@ -109,6 +105,7 @@ object frmMasterPes: TfrmMasterPes
     end
     object actCancelar: TAction
       Caption = 'actCancelar'
+      ShortCut = 27
       OnExecute = actCancelarExecute
     end
   end

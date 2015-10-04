@@ -87,6 +87,7 @@ type
     btnGravar: TSpeedButton;
     btnCancelar: TSpeedButton;
     btnExcluir: TSpeedButton;
+    actPesquisas: TAction;
     procedure qryMasterAfterOpen(DataSet: TDataSet);
     procedure qryMasterBeforeCancel(DataSet: TDataSet);
     procedure qryMasterBeforeClose(DataSet: TDataSet);
@@ -102,6 +103,12 @@ type
     procedure btnFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
+    procedure btnPesMercadoriasClick(Sender: TObject);
+    procedure actPesquisasExecute(Sender: TObject);
+    procedure grdMercadoriasKeyPress(Sender: TObject; var Key: Char);
+    procedure edtMercadoriasExit(Sender: TObject);
+    procedure qryMercadoriasBeforeInsert(DataSet: TDataSet);
+    procedure qryParcelasBeforeInsert(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -114,7 +121,7 @@ var
 implementation
 
 uses
-  uFrmPesClientes;
+  uFrmPesClientes, uFrmPesMercadorias;
 
 {$R *.dfm}
 
@@ -131,6 +138,8 @@ begin
   actGravar.Enabled   := True;
   actCancelar.Enabled := true;
   actExcluir.Enabled  := false;
+  btnPesCliente.Enabled := true;
+  btnPesMercadorias.Enabled := true;
   qryMaster.Edit;
 end;
 
@@ -141,6 +150,8 @@ begin
   actGravar.Enabled   := False;
   actCancelar.Enabled := False;
   actExcluir.Enabled  := True;
+  btnPesCliente.Enabled := False;
+  btnPesMercadorias.Enabled := False;
 
   qryMaster.Cancel;
 end;
@@ -173,6 +184,8 @@ begin
   actGravar.Enabled   := False;
   actCancelar.Enabled := False;
   actExcluir.Enabled  := True;
+  btnPesCliente.Enabled := False;
+  btnPesMercadorias.Enabled := False;
   qryMaster.Post;
   qryMaster.Refresh;
 end;
@@ -185,17 +198,35 @@ begin
   actGravar.Enabled   := True;
   actCancelar.Enabled := true;
   actExcluir.Enabled  := false;
+  btnPesCliente.Enabled := true;
+  btnPesMercadorias.Enabled := true;
   restauraSQL;
   if not qryMaster.Active then
   begin
     qryMaster.Open();
   end;
   qryMaster.Insert;
+  qryMaster.FieldByName('data_venda').AsDateTime := now;
+  edtDataVenda.SetFocus;
 end;
 
 procedure TfrmVendas.actPesquisarExecute(Sender: TObject);
 begin
   edtPesCodigo.SetFocus;
+end;
+
+procedure TfrmVendas.actPesquisasExecute(Sender: TObject);
+begin
+  if ActiveControl = lcbClientes then
+  begin
+    btnPesCliente.Click;
+  end
+  else
+  if ActiveControl = edtMercadorias then
+  begin
+    btnPesMercadorias.Click;
+  end;
+
 end;
 
 procedure TfrmVendas.btnFecharClick(Sender: TObject);
@@ -207,11 +238,44 @@ procedure TfrmVendas.btnPesClienteClick(Sender: TObject);
 var
   pesquisaClientes : TfrmPesClientes;
 begin
-  pesquisaClientes := TfrmPesClientes.Create(self);
-  pesquisaClientes.ShowModal;
-  lcbClientes.KeyValue := pesquisaClientes.id;
-  FreeAndNil(frmPesClientes);
+  if qryMaster.State in [dsEdit, dsInsert] then
+  begin
+    pesquisaClientes := TfrmPesClientes.Create(self);
+    pesquisaClientes.ShowModal;
+    lcbClientes.KeyValue := pesquisaClientes.id;
+    FreeAndNil(pesquisaClientes);
+  end;
 
+end;
+
+procedure TfrmVendas.btnPesMercadoriasClick(Sender: TObject);
+var
+  pesquisaMercadorias : TfrmPesMercadorias;
+begin
+  if qryMaster.State in [dsEdit, dsInsert] then
+  begin
+    pesquisaMercadorias := TfrmPesMercadorias.Create(self);
+    if edtMercadorias.Text <> EmptyStr then
+    begin
+      pesquisaMercadorias.edtPesCodigo.Text := edtMercadorias.Text;
+    end;
+    edtMercadorias.Clear;
+    pesquisaMercadorias.ShowModal;
+    qryMercadorias.Insert;
+    qryMercadorias.FieldByName('id_mercadoria').AsInteger := pesquisaMercadorias.id;
+    qryMercadorias.FieldByName('nome').AsString := pesquisaMercadorias.texto;
+    qryMercadorias.FieldByName('preco').AsFloat := pesquisaMercadorias.preco;
+    qryMercadorias.FieldByName('quantidade').AsInteger := 1;
+    qryMercadorias.FieldByName('ajuste').AsFloat := 0;
+    qryMercadorias.Post;
+    FreeAndNil(pesquisaMercadorias);
+  end;
+
+end;
+
+procedure TfrmVendas.edtMercadoriasExit(Sender: TObject);
+begin
+  btnPesMercadorias.Click;
 end;
 
 procedure TfrmVendas.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -224,6 +288,15 @@ procedure TfrmVendas.FormShow(Sender: TObject);
 begin
   qryMaster.Open();
   qryClientes.Open();
+end;
+
+procedure TfrmVendas.grdMercadoriasKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #127 then
+  begin
+    qryMercadorias.Delete;
+  end;
+
 end;
 
 procedure TfrmVendas.qryMasterAfterOpen(DataSet: TDataSet);
@@ -248,6 +321,22 @@ procedure TfrmVendas.qryMasterBeforeClose(DataSet: TDataSet);
 begin
   qryMercadorias.Close;
   qryParcelas.Close;
+end;
+
+procedure TfrmVendas.qryMercadoriasBeforeInsert(DataSet: TDataSet);
+begin
+  if ((qryMaster.IsEmpty) or (grdPesquisa.Focused)) then
+  begin
+    abort;
+  end;
+end;
+
+procedure TfrmVendas.qryParcelasBeforeInsert(DataSet: TDataSet);
+begin
+  if ((qryMaster.IsEmpty) or (grdPesquisa.Focused)) then
+  begin
+    abort;
+  end;
 end;
 
 procedure TfrmVendas.restauraSQL;

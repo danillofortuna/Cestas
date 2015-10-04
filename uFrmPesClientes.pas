@@ -22,7 +22,6 @@ type
     lblPesNome: TLabel;
     edtPesNome: TEdit;
     procedure pnlPesquisaExit(Sender: TObject);
-    procedure actCancelarExecute(Sender: TObject);
     procedure actRetornarExecute(Sender: TObject); override;
     procedure FormShow(Sender: TObject);
   private
@@ -37,13 +36,6 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TfrmPesClientes.actCancelarExecute(Sender: TObject);
-begin
-  inherited;
-  qryMaster.Close;
-  close;
-end;
 
 procedure TfrmPesClientes.actRetornarExecute(Sender: TObject);
 begin

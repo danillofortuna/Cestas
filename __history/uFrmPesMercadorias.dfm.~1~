@@ -1,0 +1,5 @@
+inherited frmMasterPes1: TfrmMasterPes1
+  Caption = 'frmMasterPes1'
+  PixelsPerInch = 96
+  TextHeight = 13
+end

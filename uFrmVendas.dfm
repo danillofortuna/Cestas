@@ -42,7 +42,6 @@ object frmVendas: TfrmVendas
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 200
     object lblCodigo: TLabel
       Left = 18
       Top = 6
@@ -65,11 +64,12 @@ object frmVendas: TfrmVendas
       Caption = 'Cliente:'
     end
     object btnPesCliente: TSpeedButton
-      Left = 257
+      Left = 264
       Top = 30
       Width = 82
       Height = 21
       Caption = '[F3]- Pesquisar'
+      Enabled = False
       Flat = True
       OnClick = btnPesClienteClick
     end
@@ -81,18 +81,20 @@ object frmVendas: TfrmVendas
       Caption = 'Mercadorias:'
     end
     object btnPesMercadorias: TSpeedButton
-      Left = 257
+      Left = 264
       Top = 57
       Width = 82
       Height = 21
       Caption = '[F3]- Pesquisar'
+      Enabled = False
       Flat = True
+      OnClick = btnPesMercadoriasClick
     end
     object lblDel: TLabel
       Left = 306
       Top = 185
       Width = 107
-      Height = 15
+      Height = 13
       Caption = '[Delete] para remover'
     end
     object lblParcelas: TLabel
@@ -124,19 +126,62 @@ object frmVendas: TfrmVendas
       Width = 165
       Height = 21
       TabOrder = 2
+      OnExit = edtMercadoriasExit
     end
     object grdMercadorias: TDBGrid
       Left = 93
-      Top = 80
-      Width = 320
+      Top = 84
+      Width = 420
       Height = 105
       DataSource = dsMercadorias
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 3
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnKeyPress = grdMercadoriasKeyPress
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'id'
+          Visible = False
+        end
+        item
+          Expanded = False
+          FieldName = 'id_venda'
+          Visible = False
+        end
+        item
+          Expanded = False
+          FieldName = 'id_mercadoria'
+          Visible = False
+        end
+        item
+          Expanded = False
+          FieldName = 'nome'
+          ReadOnly = True
+          Width = 200
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'preco'
+          ReadOnly = True
+          Title.Caption = 'pre'#231'o'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'quantidade'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'ajuste'
+          Visible = True
+        end>
     end
     object edtParcelas: TEdit
       Left = 93
@@ -149,7 +194,7 @@ object frmVendas: TfrmVendas
     object grdParcelas: TDBGrid
       Left = 93
       Top = 223
-      Width = 320
+      Width = 420
       Height = 102
       DataSource = dsParcelas
       TabOrder = 5
@@ -345,6 +390,7 @@ object frmVendas: TfrmVendas
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object intgrfldMasterid_cliente: TIntegerField
       AutoGenerateValue = arDefault
@@ -417,6 +463,7 @@ object frmVendas: TfrmVendas
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object strngfldClientesnome: TStringField
       FieldName = 'nome'
@@ -432,7 +479,8 @@ object frmVendas: TfrmVendas
     Top = 216
   end
   object qryMercadorias: TFDQuery
-    Active = True
+    BeforeInsert = qryMercadoriasBeforeInsert
+    CachedUpdates = True
     IndexFieldNames = 'id_venda'
     MasterSource = dsMaster
     MasterFields = 'id'
@@ -455,6 +503,7 @@ object frmVendas: TfrmVendas
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
       Visible = False
     end
     object intgrfldMercadoriasid_venda: TIntegerField
@@ -474,7 +523,6 @@ object frmVendas: TfrmVendas
       FieldName = 'nome'
       Origin = 'nome'
       ProviderFlags = []
-      ReadOnly = True
       Size = 50
     end
     object snglfldMercadoriaspreco: TSingleField
@@ -482,7 +530,6 @@ object frmVendas: TfrmVendas
       FieldName = 'preco'
       Origin = 'preco'
       ProviderFlags = []
-      ReadOnly = True
     end
     object intgrfldMercadoriasquantidade: TIntegerField
       AutoGenerateValue = arDefault
@@ -501,6 +548,7 @@ object frmVendas: TfrmVendas
     Top = 320
   end
   object qryParcelas: TFDQuery
+    BeforeInsert = qryParcelasBeforeInsert
     IndexFieldNames = 'id_venda'
     MasterSource = dsMaster
     MasterFields = 'id'
@@ -524,6 +572,7 @@ object frmVendas: TfrmVendas
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object intgrfldParcelasid_venda: TIntegerField
       AutoGenerateValue = arDefault
@@ -610,6 +659,11 @@ object frmVendas: TfrmVendas
       Caption = 'actPesquisar'
       ShortCut = 113
       OnExecute = actPesquisarExecute
+    end
+    object actPesquisas: TAction
+      Caption = 'actPesquisas'
+      ShortCut = 114
+      OnExecute = actPesquisasExecute
     end
   end
 end
