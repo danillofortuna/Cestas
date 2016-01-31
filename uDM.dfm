@@ -9,6 +9,9 @@ object DM: TDM
       'Password=bruribume'
       'Server=localhost'
       'DriverID=MySQL')
+    FetchOptions.AssignedValues = [evDetailOptimize, evDetailCascade]
+    FetchOptions.DetailCascade = True
+    Connected = True
     LoginPrompt = False
     Left = 32
     Top = 24

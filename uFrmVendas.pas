@@ -9,7 +9,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Mask, Vcl.DBCtrls,
   Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, Datasnap.DBClient;
 
 type
   TfrmVendas = class(TForm)
@@ -71,10 +71,6 @@ type
     snglfldParcelasvalor: TSingleField;
     dtfldParcelasdata_vencimento: TDateField;
     dtfldParcelasdata_recebimento: TDateField;
-    intgrfldParcelasid_parcela: TIntegerField;
-    snglfldParcelasvalor_recebido: TSingleField;
-    strngfldParcelascancelado: TStringField;
-    strngfldParcelasmotivo_cancelamento: TStringField;
     actlstBotoes: TActionList;
     actNovo: TAction;
     actAlterar: TAction;
@@ -88,6 +84,18 @@ type
     btnCancelar: TSpeedButton;
     btnExcluir: TSpeedButton;
     actPesquisas: TAction;
+    cdsTemporario: TClientDataSet;
+    intgrfldTemporarioid_mercadoria: TIntegerField;
+    fltfldTemporarioajuste: TFloatField;
+    intgrfldTemporarioquantidade: TIntegerField;
+    btnGerar: TButton;
+    lblValorTotal: TLabel;
+    edtValorTotal: TEdit;
+    fltfldTemporariopreco: TFloatField;
+    edtDtVenda: TMaskEdit;
+    lblVencimento: TLabel;
+    lbl1: TLabel;
+    edtCliente: TEdit;
     procedure qryMasterAfterOpen(DataSet: TDataSet);
     procedure qryMasterBeforeCancel(DataSet: TDataSet);
     procedure qryMasterBeforeClose(DataSet: TDataSet);
@@ -105,10 +113,26 @@ type
     procedure FormShow(Sender: TObject);
     procedure btnPesMercadoriasClick(Sender: TObject);
     procedure actPesquisasExecute(Sender: TObject);
-    procedure grdMercadoriasKeyPress(Sender: TObject; var Key: Char);
     procedure edtMercadoriasExit(Sender: TObject);
     procedure qryMercadoriasBeforeInsert(DataSet: TDataSet);
     procedure qryParcelasBeforeInsert(DataSet: TDataSet);
+    procedure grdMercadoriasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure qryMasterBeforePost(DataSet: TDataSet);
+    procedure btnGerarClick(Sender: TObject);
+    procedure somaValores;
+    procedure qryMercadoriasAfterOpen(DataSet: TDataSet);
+    procedure qryMercadoriasAfterPost(DataSet: TDataSet);
+    procedure qryMercadoriasAfterRefresh(DataSet: TDataSet);
+    procedure snglfldMercadoriasajusteChange(Sender: TField);
+    procedure intgrfldMercadoriasquantidadeChange(Sender: TField);
+    function validaParcelas: Boolean;
+    procedure btn1Click(Sender: TObject);
+    procedure qryParcelasAfterApplyUpdates(DataSet: TFDDataSet;
+      AErrors: Integer);
+    procedure qryMasterAfterScroll(DataSet: TDataSet);
+    procedure btnPesquisarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -117,6 +141,9 @@ type
 
 var
   frmVendas: TfrmVendas;
+  inserindo : Boolean;
+  valorTotal : double;
+  id_venda : Integer;
 
 implementation
 
@@ -139,7 +166,14 @@ begin
   actCancelar.Enabled := true;
   actExcluir.Enabled  := false;
   btnPesCliente.Enabled := true;
+  grdPesquisa.Enabled := false;
   btnPesMercadorias.Enabled := true;
+  edtMercadorias.Enabled := true;
+  edtParcelas.Enabled := true;
+  lcbClientes.Enabled := true;
+  btnGerar.Enabled:=False;
+  dsMercadorias.AutoEdit := True;
+  dsParcelas.AutoEdit := True;
   qryMaster.Edit;
 end;
 
@@ -152,6 +186,13 @@ begin
   actExcluir.Enabled  := True;
   btnPesCliente.Enabled := False;
   btnPesMercadorias.Enabled := False;
+  grdPesquisa.Enabled := True;
+  edtMercadorias.Enabled := false;
+  edtParcelas.Enabled := false;
+  lcbClientes.Enabled := false;
+  btnGerar.Enabled := false;
+  dsMercadorias.AutoEdit := false;
+  dsParcelas.AutoEdit := false;
 
   qryMaster.Cancel;
 end;
@@ -172,13 +213,57 @@ begin
   end
   else
   begin
-    qryMaster.Delete;
+    qryParcelas.DisableControls;
+    qryParcelas.First;
+    while not qryParcelas.eof do
+    begin
+      if not qryParcelas.FieldByName('data_recebimento').IsNull then
+      begin
+        Application.MessageBox('Não é possível excluir uma venda que possua parcelas pagas.'
+          + #13#10 +
+          'Para excluir esta venda é necessário cancelar os recebimentos de suas parcelas.',
+          '', MB_OK + MB_ICONWARNING);
+        qryParcelas.EnableControls;
+        Exit;
+      end;
+
+      qryParcelas.Next;
+    end;
+    qryParcelas.EnableControls;
+
+    qryMaster.FieldByName('cancelada').AsString := 'S';
+    qryMaster.Post;
     qryMaster.Refresh;
   end;
 end;
 
 procedure TfrmVendas.actGravarExecute(Sender: TObject);
 begin
+  if qryParcelas.IsEmpty then
+  begin
+    Application.MessageBox('Por favor, gere pelo menos uma parcela.', '',
+      MB_OK + MB_ICONWARNING);
+    Exit;
+  end;
+
+  if not validaParcelas then
+  begin
+    Application.MessageBox('O valor das parcelas não bate com o valor total. '
+      + #13#10 +
+      'Por favor, ajuste manualmente ou clique novamente em [Gerar].', '',
+      MB_OK + MB_ICONWARNING);
+      Exit;
+  end;
+
+  if Application.MessageBox('Não será possível alterar os dados desta venda após gravar.'
+    + #13#10 + 'Deseja continuar?', 'Atenção', MB_YESNO + MB_ICONWARNING) =
+    IDNO then
+  begin
+    Exit;
+  end;
+
+
+
   actNovo.Enabled     := True;
   actAlterar.Enabled  := True;
   actGravar.Enabled   := False;
@@ -186,7 +271,16 @@ begin
   actExcluir.Enabled  := True;
   btnPesCliente.Enabled := False;
   btnPesMercadorias.Enabled := False;
+  grdPesquisa.Enabled := True;
+  edtMercadorias.Enabled := false;
+  edtParcelas.Enabled := false;
+  lcbClientes.Enabled := false;
+  dsMercadorias.AutoEdit := False;
+  dsParcelas.AutoEdit := False;
+  btnGerar.Enabled := False;
+  id_venda := qryMaster.FieldByName('id').AsInteger;
   qryMaster.Post;
+  qryParcelas.ApplyUpdates(0);
   qryMaster.Refresh;
 end;
 
@@ -200,6 +294,13 @@ begin
   actExcluir.Enabled  := false;
   btnPesCliente.Enabled := true;
   btnPesMercadorias.Enabled := true;
+  grdPesquisa.Enabled := false;
+  edtMercadorias.Enabled := true;
+  edtParcelas.Enabled := true;
+  lcbClientes.Enabled := true;
+  btnGerar.Enabled := True;
+  dsMercadorias.AutoEdit := True;
+  dsParcelas.AutoEdit := True;
   restauraSQL;
   if not qryMaster.Active then
   begin
@@ -229,9 +330,72 @@ begin
 
 end;
 
+procedure TfrmVendas.btn1Click(Sender: TObject);
+begin
+  if validaParcelas then
+  begin
+    ShowMessage('ok');
+  end;
+end;
+
 procedure TfrmVendas.btnFecharClick(Sender: TObject);
 begin
   close;
+end;
+
+procedure TfrmVendas.btnGerarClick(Sender: TObject);
+var
+  parcelas : TStrings;
+  valores : array of integer;
+  parcela : Double;
+  diferenca : Double;
+  I : Integer;
+begin
+  parcelas := TStringList.Create;
+  if edtParcelas.Text = emptyStr then
+  begin
+    edtParcelas.Text := '0';
+  end;
+  parcelas.Delimiter := '/';
+  parcelas.DelimitedText := edtParcelas.Text;
+  SetLength(valores, parcelas.Count);
+  for I := 0 to parcelas.Count-1 do
+  begin
+    if not TryStrToInt(parcelas[i], valores[i]) then
+    begin
+      Application.MessageBox('Expressão inválida!', '', MB_OK + MB_ICONSTOP);
+      Exit;
+    end;
+  end;
+
+  parcela := StrToFloat(edtValorTotal.Text)/Length(valores);
+
+  diferenca := 0;
+  if parcela*Length(valores) <> valorTotal then
+  begin
+    diferenca := valorTotal - (parcela*Length(valores));
+  end;
+
+  while qryParcelas.RecordCount > 0 do
+  begin
+    qryParcelas.Delete;
+  end;
+
+  for I := 0 to Length(valores)-1 do
+  begin
+    qryParcelas.Insert;
+    if I = 0 then
+    begin
+      qryParcelas.FieldByName('valor').AsFloat := parcela + diferenca;
+    end
+    else
+    begin
+      qryParcelas.FieldByName('valor').AsFloat := parcela;
+    end;
+    qryParcelas.FieldByName('data_vencimento').AsDateTime := Now + valores[i];
+    qryParcelas.Post;
+  end;
+
 end;
 
 procedure TfrmVendas.btnPesClienteClick(Sender: TObject);
@@ -252,6 +416,7 @@ procedure TfrmVendas.btnPesMercadoriasClick(Sender: TObject);
 var
   pesquisaMercadorias : TfrmPesMercadorias;
 begin
+  inserindo := true;
   if qryMaster.State in [dsEdit, dsInsert] then
   begin
     pesquisaMercadorias := TfrmPesMercadorias.Create(self);
@@ -269,13 +434,55 @@ begin
     qryMercadorias.FieldByName('ajuste').AsFloat := 0;
     qryMercadorias.Post;
     FreeAndNil(pesquisaMercadorias);
+    inserindo := false;
+    somaValores;
+    edtMercadorias.SetFocus;
   end;
 
 end;
 
+procedure TfrmVendas.btnPesquisarClick(Sender: TObject);
+begin
+try
+    restauraSQL;
+    if edtPesCodigo.Text <> emptyStr then
+    begin
+      qryMaster.SQL.Add('and v.id = '+edtPesCodigo.Text);
+      Exit;
+    end;
+
+    if Trim(edtDtVenda.text)<>'/  /' then
+    begin
+      qryMaster.SQL.Add('and v.data_venda = '+QuotedStr(edtDtVenda.Text));
+    end;
+
+    if edtCliente.Text <> emptyStr then
+    begin
+      qryMaster.SQL.Add('and c.nome like('+quotedStr('%'+edtCliente.Text+'%')+')');
+    end;
+
+  finally
+    qryMaster.Open();
+    edtPesCodigo.Clear;
+    edtCliente.Clear;
+    if qryMaster.IsEmpty then
+    begin
+      edtPesCodigo.SetFocus;
+    end
+    else
+    begin
+      grdPesquisa.SetFocus;
+    end;
+
+  end;
+end;
+
 procedure TfrmVendas.edtMercadoriasExit(Sender: TObject);
 begin
-  btnPesMercadorias.Click;
+  if edtMercadorias.Text <> EmptyStr then
+  begin
+    btnPesMercadorias.Click;
+  end;
 end;
 
 procedure TfrmVendas.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -284,19 +491,52 @@ begin
   frmVendas := nil;
 end;
 
+procedure TfrmVendas.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if ((Key = #13) and (activeControl <> grdPesquisa) and
+      (activeControl <> grdMercadorias) and (activeControl <> grdParcelas)) then
+  begin
+    Perform(WM_NEXTDLGCTL,0,0);
+    Key := #0;
+  end;
+end;
+
 procedure TfrmVendas.FormShow(Sender: TObject);
 begin
   qryMaster.Open();
   qryClientes.Open();
 end;
 
-procedure TfrmVendas.grdMercadoriasKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmVendas.grdMercadoriasKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
 begin
-  if Key = #127 then
+
+  if Key = VK_DELETE then
   begin
-    qryMercadorias.Delete;
+    if qryMaster.State in [dsEdit, dsInsert] then
+    begin
+      if qryMercadorias.Active then
+      begin
+        if not qryMercadorias.IsEmpty then
+        begin
+          if qryMercadorias.State in [dsEdit, dsInsert] then
+          begin
+            qryMercadorias.Cancel;
+          end
+          else
+          begin
+            qryMercadorias.Delete;
+          end;
+        end;
+      end;
+    end;
   end;
 
+end;
+
+procedure TfrmVendas.intgrfldMercadoriasquantidadeChange(Sender: TField);
+begin
+  somaValores;
 end;
 
 procedure TfrmVendas.qryMasterAfterOpen(DataSet: TDataSet);
@@ -307,8 +547,34 @@ end;
 
 procedure TfrmVendas.qryMasterAfterPost(DataSet: TDataSet);
 begin
-  qryMercadorias.Post;
-  qryParcelas.Post;
+  cdsTemporario.First;
+  inserindo := True;
+  DM.conMysql.ExecSQL('delete from itens_venda where id_venda = '+qryMaster.FieldByName('id').asString);
+  cdsTemporario.First;
+  while not cdsTemporario.Eof do
+  begin
+    qryMercadorias.Insert;
+    qryMercadorias.FieldByName('id_mercadoria').AsInteger :=
+      cdsTemporario.FieldByName('id_mercadoria').AsInteger;
+    qryMercadorias.FieldByName('quantidade').AsInteger :=
+      cdsTemporario.FieldByName('quantidade').AsInteger;
+    qryMercadorias.FieldByName('ajuste').AsInteger :=
+      cdsTemporario.FieldByName('ajuste').AsInteger;
+    qryMercadorias.FieldByName('preco').AsInteger :=
+      cdsTemporario.FieldByName('preco').AsInteger;
+
+    qryMercadorias.Post;
+    cdsTemporario.Next;
+  end;
+  inserindo := false;
+  qryMercadorias.ApplyUpdates(0);
+  qryMercadorias.CommitUpdates;
+  qryMercadorias.Refresh;
+end;
+
+procedure TfrmVendas.qryMasterAfterScroll(DataSet: TDataSet);
+begin
+  somaValores;
 end;
 
 procedure TfrmVendas.qryMasterBeforeCancel(DataSet: TDataSet);
@@ -323,17 +589,69 @@ begin
   qryParcelas.Close;
 end;
 
+procedure TfrmVendas.qryMasterBeforePost(DataSet: TDataSet);
+begin
+  if qryMercadorias.State in [dsEdit, dsInsert] then
+  begin
+    qryMercadorias.post;
+  end;
+  qryMercadorias.First;
+  cdsTemporario.Close;
+  cdsTemporario.CreateDataSet;
+  cdsTemporario.Open;
+  while not qryMercadorias.Eof do
+  begin
+    cdsTemporario.Insert;
+    cdsTemporario.FieldByName('id_mercadoria').AsInteger :=
+      qryMercadorias.FieldByName('id_mercadoria').AsInteger;
+    cdsTemporario.FieldByName('quantidade').AsInteger :=
+      qryMercadorias.FieldByName('quantidade').AsInteger;
+    cdsTemporario.FieldByName('ajuste').AsInteger :=
+      qryMercadorias.FieldByName('ajuste').AsInteger;
+    cdsTemporario.FieldByName('preco').AsInteger :=
+      qryMercadorias.FieldByName('preco').AsInteger;
+    cdsTemporario.Post;
+    qryMercadorias.Next;
+  end;
+  qryMercadorias.cancelupdates;
+end;
+
+procedure TfrmVendas.qryMercadoriasAfterOpen(DataSet: TDataSet);
+begin
+  somaValores;
+end;
+
+procedure TfrmVendas.qryMercadoriasAfterPost(DataSet: TDataSet);
+begin
+  somaValores;
+end;
+
+procedure TfrmVendas.qryMercadoriasAfterRefresh(DataSet: TDataSet);
+begin
+  somaValores;
+end;
+
 procedure TfrmVendas.qryMercadoriasBeforeInsert(DataSet: TDataSet);
 begin
-  if ((qryMaster.IsEmpty) or (grdPesquisa.Focused)) then
+  if ((qryMaster.IsEmpty) or (not inserindo)) then
   begin
     abort;
   end;
 end;
 
+procedure TfrmVendas.qryParcelasAfterApplyUpdates(DataSet: TFDDataSet;
+  AErrors: Integer);
+begin
+  qryParcelas.CommitUpdates;
+  dm.conMysql.ExecSQL('update parcelas_venda set id_venda = '+qryMaster.FieldByName('id').AsString
+                      +' where id_venda = '+IntToStr(id_venda));
+  id_venda := 0;
+  qryParcelas.Refresh;
+end;
+
 procedure TfrmVendas.qryParcelasBeforeInsert(DataSet: TDataSet);
 begin
-  if ((qryMaster.IsEmpty) or (grdPesquisa.Focused)) then
+  if ((qryMaster.IsEmpty) or (grdParcelas.Focused)) then
   begin
     abort;
   end;
@@ -341,7 +659,78 @@ end;
 
 procedure TfrmVendas.restauraSQL;
 begin
-  //restaurar SQL
+  if qryMaster.Active then
+  begin
+    if qryMaster.State in [dsEdit, dsInsert] then
+    begin
+      qryMaster.Cancel;
+    end;
+    qryMaster.Close;
+  end;
+  qryMaster.SQL.Clear;
+  qryMaster.SQL.Add('SELECT V.id,');
+  qryMaster.SQL.Add('       V.id_cliente,');
+  qryMaster.SQL.Add('       C.nome,');
+  qryMaster.SQL.Add('       V.data_venda,');
+  qryMaster.SQL.Add('       V.parcelado,');
+  qryMaster.SQL.Add('       V.data_recebimento,');
+  qryMaster.SQL.Add('       V.valor_recebido,');
+  qryMaster.SQL.Add('       V.cancelada,');
+  qryMaster.SQL.Add('       V.motivo_cancelamento,');
+  qryMaster.SQL.Add('       V.valor_total');
+  qryMaster.SQL.Add('FROM   vendas V,');
+  qryMaster.SQL.Add('       clientes C');
+  qryMaster.SQL.Add('WHERE  V.id_cliente = C.id');
+  qryMaster.SQL.Add('       and V.cancelada = '+quotedStr('N'));
+end;
+
+procedure TfrmVendas.snglfldMercadoriasajusteChange(Sender: TField);
+begin
+  somaValores;
+end;
+
+procedure TfrmVendas.somaValores;
+var
+  valor : Double;
+  recno : integer;
+begin
+  if not inserindo then
+  begin
+    valor := 0;
+    qryMercadorias.DisableControls;
+    recno := qryMercadorias.RecNo;
+    qryMercadorias.First;
+    while not qryMercadorias.eof do
+    begin
+      valor := qryMercadorias.FieldByName('ajuste').AsFloat +
+                (qryMercadorias.FieldByName('quantidade').AsInteger *
+                qryMercadorias.FieldByName('preco').AsFloat)  +
+               valor;
+      qryMercadorias.Next;
+    end;
+    qryMercadorias.RecNo := recno;
+    qryMercadorias.EnableControls;
+    valorTotal := valor;
+    edtValorTotal.Text := FormatFloat('0.00', valor);
+  end;
+
+end;
+
+function TfrmVendas.validaParcelas: Boolean;
+var
+  soma : Double;
+begin
+  qryParcelas.DisableControls;
+  qryParcelas.First;
+  soma := 0;
+  while not qryParcelas.Eof do
+  begin
+    soma := soma + qryParcelas.FieldByName('valor').AsFloat;
+    qryParcelas.Next;
+  end;
+  qryParcelas.EnableControls;
+  Result := (FormatFloat('##.00', soma) = FormatFloat('##.00',valorTotal) );
+
 end;
 
 end.

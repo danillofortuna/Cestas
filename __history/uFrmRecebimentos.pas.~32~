@@ -1,0 +1,199 @@
+unit uFrmRecebimentos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uFrmMasterCad, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.DBGrids,
+  Vcl.Buttons, Vcl.ExtCtrls;
+
+type
+  TfrmRecebimentos = class(TfrmMasterCad)
+    Label1: TLabel;
+    DBEdit1: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label3: TLabel;
+    DBEdit3: TDBEdit;
+    Label4: TLabel;
+    DBEdit4: TDBEdit;
+    Label7: TLabel;
+    DBEdit7: TDBEdit;
+    pnl1: TPanel;
+    btnCancelarRecebimento: TSpeedButton;
+    btnReceber: TSpeedButton;
+    Label5: TLabel;
+    edtnome: TDBEdit;
+    actReceberParcela: TAction;
+    actCancelarParcela: TAction;
+    edtCodVenda: TEdit;
+    lblCodVenda: TLabel;
+    lblVencimento: TLabel;
+    lblCliente: TLabel;
+    edtCliente: TEdit;
+    edtVencimento: TMaskEdit;
+    fdtncfldMasterid: TFDAutoIncField;
+    intgrfldMasterid_venda: TIntegerField;
+    snglfldMastervalor: TSingleField;
+    dtfldMasterdata_vencimento: TDateField;
+    dtfldMasterdata_recebimento: TDateField;
+    strngfldMasternome: TStringField;
+    chkRecebidos: TCheckBox;
+    procedure qryMasterAfterScroll(DataSet: TDataSet);
+    procedure actReceberParcelaExecute(Sender: TObject);
+    procedure actCancelarParcelaExecute(Sender: TObject);
+    procedure btnPesquisarClick(Sender: TObject);
+    procedure restauraSQL;override;
+    procedure edtVencimentoExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmRecebimentos: TfrmRecebimentos;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmRecebimentos.actCancelarParcelaExecute(Sender: TObject);
+begin
+  inherited;
+  if Application.MessageBox('Tem certeza de que deseja cancelar este recebimento?',
+    'Cancelar Recebimento', MB_YESNO + MB_ICONQUESTION) = IDNO then
+  begin
+    Exit;
+  end;
+
+  qryMaster.Edit;
+  qryMaster.FieldByName('data_recebimento').value := null;
+  qryMaster.Post;
+  actCancelarParcela.Enabled := false;
+  actReceberParcela.Enabled := true;
+end;
+
+procedure TfrmRecebimentos.actReceberParcelaExecute(Sender: TObject);
+begin
+  inherited;
+  if qryMaster.FieldByName('data_recebimento').AsDateTime < now then
+  begin
+    if Application.MessageBox('Esta parcela está vencida. Deseja realmente receber?',
+      'Parcela Vencida!', MB_YESNO + MB_ICONQUESTION) = IDNO then
+    begin
+      Exit;
+    end;
+  end;
+
+  qryMaster.Edit;
+  qryMaster.FieldByName('data_recebimento').AsDateTime := now;
+  qryMaster.Post;
+  actReceberParcela.Enabled := False;
+  actCancelarParcela.Enabled := True;
+end;
+
+procedure TfrmRecebimentos.btnPesquisarClick(Sender: TObject);
+begin
+  inherited;
+  try
+    restauraSQL;
+    if edtPesCodigo.Text <> emptyStr then
+    begin
+      qryMaster.SQL.Add('and pv.id = '+edtPesCodigo.Text);
+      Exit;
+    end;
+
+    if edtCodVenda.Text <> emptyStr then
+    begin
+      qryMaster.SQL.Add('and pv.id_venda = '+edtCodVenda.text);
+    end;
+
+    if Trim(edtVencimento.text)<>'/  /' then
+    begin
+      qryMaster.SQL.Add('and pv.data_vencimento = '+QuotedStr(edtVencimento.Text));
+    end;
+
+    if edtCliente.Text <> emptyStr then
+    begin
+      qryMaster.SQL.Add('and c.nome like('+quotedStr('%'+edtCliente.Text+'%')+')');
+    end;
+
+    if chkRecebidos.Checked then
+    begin
+      qryMaster.SQL.Add('and pv.data_recebimento is not null');
+    end
+    else
+    begin
+      qryMaster.SQL.Add('and pv.data_recebimento is null');
+    end;
+
+  finally
+    qryMaster.SQL.Add('order by pv.data_recebimento desc');
+    qryMaster.Open();
+  end;
+end;
+
+procedure TfrmRecebimentos.edtVencimentoExit(Sender: TObject);
+var
+  data : TDate;
+begin
+  inherited;
+  if Trim(edtVencimento.Text) <> '/  /' then
+  begin
+    if not TryStrToDate(edtVencimento.Text, data) then
+    begin
+      Application.MessageBox('Digite uma data válida.', 'Data inválida', MB_OK
+        + MB_ICONSTOP);
+      Abort;
+    end;
+  end;
+
+end;
+
+procedure TfrmRecebimentos.qryMasterAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if qryMaster.FieldByName('data_recebimento').IsNull then
+  begin
+    actReceberParcela.Enabled := True;
+    actCancelarParcela.Enabled := False;
+  end
+  else
+  begin
+    actReceberParcela.Enabled := False;
+    actCancelarParcela.Enabled := True;
+  end;
+end;
+
+procedure TfrmRecebimentos.restauraSQL;
+begin
+  inherited;
+  if qryMaster.Active then
+  begin
+    if qryMaster.State in [dsEdit, dsInsert] then
+    begin
+      qryMaster.Cancel;
+    end;
+    qryMaster.Close;
+  end;
+  qryMaster.SQL.Clear;
+  qryMaster.SQL.Add('select pv.id,');
+  qryMaster.SQL.Add('       pv.id_venda,');
+  qryMaster.SQL.Add('       pv.valor,');
+  qryMaster.SQL.Add('       pv.data_vencimento,');
+  qryMaster.SQL.Add('       pv.data_recebimento,');
+  qryMaster.SQL.Add('       c.nome');
+  qryMaster.SQL.Add('from parcelas_venda pv,');
+  qryMaster.SQL.Add('     vendas v,');
+  qryMaster.SQL.Add('     clientes c');
+  qryMaster.SQL.Add('where pv.id_venda = v.id');
+  qryMaster.SQL.Add('      and c.id = v.id_cliente');
+
+end;
+
+end.

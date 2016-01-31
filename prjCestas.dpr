@@ -13,7 +13,8 @@ uses
   uFrmMasterPes in 'uFrmMasterPes.pas' {frmMasterPes},
   uFrmPesClientes in 'uFrmPesClientes.pas' {frmPesClientes},
   uFuncoes in 'uFuncoes.pas',
-  uFrmPesMercadorias in 'uFrmPesMercadorias.pas' {frmPesMercadorias};
+  uFrmPesMercadorias in 'uFrmPesMercadorias.pas' {frmPesMercadorias},
+  uFrmRecebimentos in 'uFrmRecebimentos.pas' {frmRecebimentos};
 
 {$R *.res}
 

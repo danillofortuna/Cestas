@@ -79,6 +79,7 @@ begin
   actGravar.Enabled   := True;
   actCancelar.Enabled := true;
   actExcluir.Enabled  := false;
+  grdPesquisa.Enabled := false;
   qryMaster.Edit;
 end;
 
@@ -89,6 +90,7 @@ begin
   actGravar.Enabled   := False;
   actCancelar.Enabled := False;
   actExcluir.Enabled  := True;
+  grdPesquisa.Enabled := True;
 
   qryMaster.Cancel;
 end;
@@ -123,6 +125,7 @@ begin
   actGravar.Enabled   := False;
   actCancelar.Enabled := False;
   actExcluir.Enabled  := True;
+  grdPesquisa.Enabled := True;
   qryMaster.Post;
   qryMaster.Refresh;
 end;
@@ -135,6 +138,7 @@ begin
   actGravar.Enabled   := True;
   actCancelar.Enabled := true;
   actExcluir.Enabled  := false;
+  grdPesquisa.enabled := False;
   restauraSQL;
   if not qryMaster.Active then
   begin
@@ -156,6 +160,12 @@ end;
 
 procedure TfrmMasterCad.btnPesquisarClick(Sender: TObject);
 begin
+  if qryMaster.IsEmpty then
+  begin
+    Application.MessageBox('Nenhum registro encontrado.', '', MB_OK +
+      MB_ICONINFORMATION);
+    pnlPesquisa.SetFocus;
+  end;
   grdPesquisa.SetFocus;
 end;
 

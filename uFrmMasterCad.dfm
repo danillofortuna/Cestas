@@ -84,7 +84,6 @@ object frmMasterCad: TfrmMasterCad
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 48
       object btnPesquisar: TButton
         Left = 0
         Top = 7
@@ -94,9 +93,6 @@ object frmMasterCad: TfrmMasterCad
         Caption = 'Pesquisar'
         TabOrder = 0
         OnClick = btnPesquisarClick
-        ExplicitLeft = 16
-        ExplicitTop = 24
-        ExplicitWidth = 75
       end
     end
     object edtPesCodigo: TEdit
@@ -135,7 +131,6 @@ object frmMasterCad: TfrmMasterCad
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitTop = 175
     object btnAlterar: TSpeedButton
       Left = 90
       Top = 0
@@ -198,10 +193,6 @@ object frmMasterCad: TfrmMasterCad
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitLeft = 408
-    ExplicitTop = 328
-    ExplicitWidth = 185
-    ExplicitHeight = 41
   end
   object actlstBotoes: TActionList
     Left = 512

@@ -101,12 +101,12 @@
       ExplicitTop = 6
     end
     object btnRelatórios: TSpeedButton
-      Left = 300
+      Left = 375
       Top = 0
       Width = 75
       Height = 32
       Align = alLeft
-      Caption = '&Relat'#243'rios'
+      Caption = 'R&elat'#243'rios'
       Flat = True
       Visible = False
       OnClick = btnRelatóriosClick
@@ -124,6 +124,19 @@
       Flat = True
       OnClick = btnCidadeClick
       ExplicitLeft = 163
+    end
+    object btnRecebimentos: TSpeedButton
+      Left = 300
+      Top = 0
+      Width = 75
+      Height = 32
+      Align = alLeft
+      Caption = '&Recebimentos'
+      Flat = True
+      OnClick = btnRecebimentosClick
+      ExplicitLeft = 336
+      ExplicitTop = 8
+      ExplicitHeight = 25
     end
   end
 end

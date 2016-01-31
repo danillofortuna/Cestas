@@ -2,8 +2,8 @@ object frmVendas: TfrmVendas
   Left = 0
   Top = 0
   BorderStyle = bsNone
-  ClientHeight = 562
-  ClientWidth = 739
+  ClientHeight = 570
+  ClientWidth = 761
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,17 +11,19 @@ object frmVendas: TfrmVendas
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
+  KeyPreview = True
   OldCreateOrder = False
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
+  OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object grdPesquisa: TDBGrid
     Left = 0
     Top = 57
-    Width = 739
+    Width = 761
     Height = 96
     Align = alTop
     DataSource = dsMaster
@@ -33,15 +35,69 @@ object frmVendas: TfrmVendas
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'id'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'id_cliente'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'nome'
+        Title.Caption = 'Cliente'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'data_venda'
+        Title.Caption = 'Dt. Venda'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'parcelado'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'data_recebimento'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'valor_recebido'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'cancelada'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'motivo_cancelamento'
+        Visible = False
+      end
+      item
+        Expanded = False
+        FieldName = 'valor_total'
+        Visible = True
+      end>
   end
   object pnlDados: TPanel
     Left = 0
     Top = 194
-    Width = 739
-    Height = 368
+    Width = 761
+    Height = 376
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 737
     object lblCodigo: TLabel
       Left = 18
       Top = 6
@@ -91,8 +147,8 @@ object frmVendas: TfrmVendas
       OnClick = btnPesMercadoriasClick
     end
     object lblDel: TLabel
-      Left = 306
-      Top = 185
+      Left = 406
+      Top = 188
       Width = 107
       Height = 13
       Caption = '[Delete] para remover'
@@ -103,6 +159,19 @@ object frmVendas: TfrmVendas
       Width = 44
       Height = 13
       Caption = 'Parcelas:'
+    end
+    object lblValorTotal: TLabel
+      Left = 294
+      Top = 331
+      Width = 92
+      Height = 19
+      Caption = 'ValorTotal:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
     object edtCodigo: TDBEdit
       Left = 93
@@ -118,6 +187,8 @@ object frmVendas: TfrmVendas
       Top = 3
       Width = 99
       Height = 21
+      DataField = 'data_venda'
+      DataSource = dsMaster
       TabOrder = 1
     end
     object edtMercadorias: TEdit
@@ -125,7 +196,8 @@ object frmVendas: TfrmVendas
       Top = 57
       Width = 165
       Height = 21
-      TabOrder = 2
+      Enabled = False
+      TabOrder = 3
       OnExit = edtMercadoriasExit
     end
     object grdMercadorias: TDBGrid
@@ -135,13 +207,13 @@ object frmVendas: TfrmVendas
       Height = 105
       DataSource = dsMercadorias
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-      TabOrder = 3
+      TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnKeyPress = grdMercadoriasKeyPress
+      OnKeyDown = grdMercadoriasKeyDown
       Columns = <
         item
           Expanded = False
@@ -162,7 +234,7 @@ object frmVendas: TfrmVendas
           Expanded = False
           FieldName = 'nome'
           ReadOnly = True
-          Width = 200
+          Width = 188
           Visible = True
         end
         item
@@ -184,11 +256,12 @@ object frmVendas: TfrmVendas
         end>
     end
     object edtParcelas: TEdit
-      Left = 93
+      Left = 89
       Top = 200
       Width = 121
       Height = 21
-      TabOrder = 4
+      Enabled = False
+      TabOrder = 5
       Text = '0'
     end
     object grdParcelas: TDBGrid
@@ -197,12 +270,35 @@ object frmVendas: TfrmVendas
       Width = 420
       Height = 102
       DataSource = dsParcelas
-      TabOrder = 5
+      TabOrder = 7
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'id'
+          Visible = False
+        end
+        item
+          Expanded = False
+          FieldName = 'valor'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'data_vencimento'
+          ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'data_recebimento'
+          ReadOnly = True
+          Visible = True
+        end>
     end
     object lcbClientes: TDBLookupComboBox
       Left = 93
@@ -211,21 +307,47 @@ object frmVendas: TfrmVendas
       Height = 21
       DataField = 'id_cliente'
       DataSource = dsMaster
+      Enabled = False
       KeyField = 'id'
       ListField = 'nome'
       ListSource = dsClientes
+      TabOrder = 2
+    end
+    object btnGerar: TButton
+      Left = 216
+      Top = 200
+      Width = 60
+      Height = 21
+      Caption = 'Gerar'
+      Enabled = False
       TabOrder = 6
+      OnClick = btnGerarClick
+    end
+    object edtValorTotal: TEdit
+      Left = 392
+      Top = 331
+      Width = 121
+      Height = 27
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 8
     end
   end
   object pnlPesquisa: TPanel
     Left = 0
     Top = 25
-    Width = 739
+    Width = 761
     Height = 32
     Align = alTop
     Alignment = taLeftJustify
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 737
     object lblPesquisar: TLabel
       Left = 5
       Top = 0
@@ -240,14 +362,29 @@ object frmVendas: TfrmVendas
       Height = 13
       Caption = 'C'#243'digo:'
     end
+    object lblVencimento: TLabel
+      Left = 168
+      Top = 9
+      Width = 48
+      Height = 13
+      Caption = 'Dt. Venda'
+    end
+    object lbl1: TLabel
+      Left = 326
+      Top = 9
+      Width = 37
+      Height = 13
+      Caption = 'Cliente:'
+    end
     object pnlBtnPesquisar: TPanel
-      Left = 668
+      Left = 690
       Top = 0
       Width = 71
       Height = 32
       Align = alRight
       BevelOuter = bvNone
-      TabOrder = 1
+      TabOrder = 3
+      ExplicitLeft = 666
       object btnPesquisar: TButton
         Left = 0
         Top = 7
@@ -256,6 +393,7 @@ object frmVendas: TfrmVendas
         Align = alBottom
         Caption = 'Pesquisar'
         TabOrder = 0
+        OnClick = btnPesquisarClick
       end
     end
     object edtPesCodigo: TEdit
@@ -267,11 +405,29 @@ object frmVendas: TfrmVendas
       NumbersOnly = True
       TabOrder = 0
     end
+    object edtDtVenda: TMaskEdit
+      Left = 227
+      Top = 6
+      Width = 86
+      Height = 21
+      EditMask = '!99/99/0000;1;_'
+      MaxLength = 10
+      TabOrder = 1
+      Text = '  /  /    '
+    end
+    object edtCliente: TEdit
+      Left = 362
+      Top = 6
+      Width = 105
+      Height = 21
+      MaxLength = 6
+      TabOrder = 2
+    end
   end
   object pnlTitulo: TPanel
     Left = 0
     Top = 0
-    Width = 739
+    Width = 761
     Height = 25
     Align = alTop
     Caption = 'Vendas'
@@ -284,8 +440,9 @@ object frmVendas: TfrmVendas
     ParentBackground = False
     ParentFont = False
     TabOrder = 3
+    ExplicitWidth = 737
     object btnFechar: TSpeedButton
-      Left = 692
+      Left = 714
       Top = 1
       Width = 46
       Height = 23
@@ -305,11 +462,12 @@ object frmVendas: TfrmVendas
   object pnlBotoes: TPanel
     Left = 0
     Top = 153
-    Width = 739
+    Width = 761
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitWidth = 737
     object btnNovo: TSpeedButton
       Left = 0
       Top = 0
@@ -330,6 +488,7 @@ object frmVendas: TfrmVendas
       Align = alLeft
       Caption = 'Alterar [F5]'
       Flat = True
+      Visible = False
     end
     object btnGravar: TSpeedButton
       Left = 270
@@ -366,8 +525,10 @@ object frmVendas: TfrmVendas
   object qryMaster: TFDQuery
     AfterOpen = qryMasterAfterOpen
     BeforeClose = qryMasterBeforeClose
+    BeforePost = qryMasterBeforePost
     AfterPost = qryMasterAfterPost
     BeforeCancel = qryMasterBeforeCancel
+    AfterScroll = qryMasterAfterScroll
     Connection = DM.conMysql
     SQL.Strings = (
       'SELECT V.id,'
@@ -479,9 +640,29 @@ object frmVendas: TfrmVendas
     Top = 216
   end
   object qryMercadorias: TFDQuery
+    AfterOpen = qryMercadoriasAfterOpen
     BeforeInsert = qryMercadoriasBeforeInsert
+    AfterPost = qryMercadoriasAfterPost
+    AfterRefresh = qryMercadoriasAfterRefresh
     CachedUpdates = True
     IndexFieldNames = 'id_venda'
+    Aggregates = <
+      item
+        Name = 'sum_preco'
+        Expression = 'sum(preco)'
+        Active = True
+      end
+      item
+        Name = 'sum_ajuste'
+        Expression = 'sum(ajuste)'
+        Active = True
+      end
+      item
+        Name = 'total'
+        Expression = 'sum_preco + sum_ajuste'
+        Active = True
+      end>
+    AggregatesActive = True
     MasterSource = dsMaster
     MasterFields = 'id'
     DetailFields = 'id_venda'
@@ -491,7 +672,7 @@ object frmVendas: TfrmVendas
       '       I.id_venda,'
       '       I.id_mercadoria,'
       '       M.nome,'
-      '       M.preco,'
+      '       I.preco,'
       '       I.ajuste,'
       '       I.quantidade'
       'from   itens_venda I,'
@@ -504,7 +685,6 @@ object frmVendas: TfrmVendas
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
       ReadOnly = True
-      Visible = False
     end
     object intgrfldMercadoriasid_venda: TIntegerField
       AutoGenerateValue = arDefault
@@ -529,43 +709,44 @@ object frmVendas: TfrmVendas
       AutoGenerateValue = arDefault
       FieldName = 'preco'
       Origin = 'preco'
-      ProviderFlags = []
+      currency = True
     end
     object intgrfldMercadoriasquantidade: TIntegerField
       AutoGenerateValue = arDefault
       FieldName = 'quantidade'
       Origin = 'quantidade'
+      OnChange = intgrfldMercadoriasquantidadeChange
     end
     object snglfldMercadoriasajuste: TSingleField
       AutoGenerateValue = arDefault
       FieldName = 'ajuste'
       Origin = 'ajuste'
+      OnChange = snglfldMercadoriasajusteChange
+      currency = True
     end
   end
   object dsMercadorias: TDataSource
+    AutoEdit = False
     DataSet = qryMercadorias
     Left = 320
     Top = 320
   end
   object qryParcelas: TFDQuery
     BeforeInsert = qryParcelasBeforeInsert
+    CachedUpdates = True
     IndexFieldNames = 'id_venda'
     MasterSource = dsMaster
     MasterFields = 'id'
     DetailFields = 'id_venda'
+    AfterApplyUpdates = qryParcelasAfterApplyUpdates
     Connection = DM.conMysql
     SQL.Strings = (
       'select P.id,'
       '       P.id_venda,'
       '       P.valor,'
       '       P.data_vencimento,'
-      '       P.data_recebimento,'
-      '       P.id_parcela,'
-      '       P.valor_recebido,'
-      '       P.cancelado,'
-      '       P.motivo_cancelamento'
-      'from   parcelas_venda P'
-      'where  P.cancelado = '#39'N'#39)
+      '       P.data_recebimento'
+      'from   parcelas_venda P')
     Left = 240
     Top = 432
     object fdtncfldParcelasid: TFDAutoIncField
@@ -573,6 +754,7 @@ object frmVendas: TfrmVendas
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
       ReadOnly = True
+      Visible = False
     end
     object intgrfldParcelasid_venda: TIntegerField
       AutoGenerateValue = arDefault
@@ -584,6 +766,7 @@ object frmVendas: TfrmVendas
       AutoGenerateValue = arDefault
       FieldName = 'valor'
       Origin = 'valor'
+      currency = True
     end
     object dtfldParcelasdata_vencimento: TDateField
       AutoGenerateValue = arDefault
@@ -595,32 +778,9 @@ object frmVendas: TfrmVendas
       FieldName = 'data_recebimento'
       Origin = 'data_recebimento'
     end
-    object intgrfldParcelasid_parcela: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'id_parcela'
-      Origin = 'id_parcela'
-      Visible = False
-    end
-    object snglfldParcelasvalor_recebido: TSingleField
-      AutoGenerateValue = arDefault
-      FieldName = 'valor_recebido'
-      Origin = 'valor_recebido'
-      Visible = False
-    end
-    object strngfldParcelascancelado: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'cancelado'
-      Origin = 'cancelado'
-      Size = 1
-    end
-    object strngfldParcelasmotivo_cancelamento: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'motivo_cancelamento'
-      Origin = 'motivo_cancelamento'
-      Size = 500
-    end
   end
   object dsParcelas: TDataSource
+    AutoEdit = False
     DataSet = qryParcelas
     Left = 328
     Top = 432
@@ -635,7 +795,6 @@ object frmVendas: TfrmVendas
     end
     object actAlterar: TAction
       Caption = 'actAlterar'
-      ShortCut = 116
       OnExecute = actAlterarExecute
     end
     object actCancelar: TAction
@@ -664,6 +823,28 @@ object frmVendas: TfrmVendas
       Caption = 'actPesquisas'
       ShortCut = 114
       OnExecute = actPesquisasExecute
+    end
+  end
+  object cdsTemporario: TClientDataSet
+    Aggregates = <
+      item
+        AggregateName = 'id_mercadoria'
+        Visible = False
+      end>
+    Params = <>
+    Left = 536
+    Top = 314
+    object intgrfldTemporarioid_mercadoria: TIntegerField
+      FieldName = 'id_mercadoria'
+    end
+    object fltfldTemporarioajuste: TFloatField
+      FieldName = 'ajuste'
+    end
+    object intgrfldTemporarioquantidade: TIntegerField
+      FieldName = 'quantidade'
+    end
+    object fltfldTemporariopreco: TFloatField
+      FieldName = 'preco'
     end
   end
 end

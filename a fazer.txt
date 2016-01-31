@@ -1,0 +1,9 @@
+before insert nos detalhes para cancelar seta para baixo na grid.
+
+pesquisa F3 ok!
+
+*cancelar edtMercadorias quando nao estiver em edição/inserção no master 
+
+*onAlterDadosQryMaster: ajuste e qtd sempre minimo de 0 e 1, respectivamente.
+
+*tratar parcelas e implementar o resto.

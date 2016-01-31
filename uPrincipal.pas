@@ -17,11 +17,13 @@ type
     btnVendas: TSpeedButton;
     btnRelatórios: TSpeedButton;
     btnCidade: TSpeedButton;
+    btnRecebimentos: TSpeedButton;
     procedure btnClientesClick(Sender: TObject);
     procedure btnMercadoriasClick(Sender: TObject);
     procedure btnCidadeClick(Sender: TObject);
     procedure btnRelatóriosClick(Sender: TObject);
     procedure btnVendasClick(Sender: TObject);
+    procedure btnRecebimentosClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,7 +37,7 @@ implementation
 
 uses
   uFrmClientes, uFrmMercadorias, uFrmCidades, uFrmRelatorios,
-  uFrmVendas;
+  uFrmVendas, uFrmRecebimentos;
 
 {$R *.dfm}
 
@@ -54,6 +56,7 @@ begin
   begin
     FrmClientes := TFrmClientes.create(Self);
   end;
+
   FrmClientes.BringToFront;
 end;
 
@@ -64,6 +67,15 @@ begin
     frmMercadorias := TfrmMercadorias.create(Self);
   end;
   frmMercadorias.BringToFront;
+end;
+
+procedure TfrmPrincipal.btnRecebimentosClick(Sender: TObject);
+begin
+  if frmRecebimentos = nil then
+  begin
+    frmRecebimentos := TfrmRecebimentos.Create(Self);
+  end;
+  frmRecebimentos.BringToFront;
 end;
 
 procedure TfrmPrincipal.btnRelatóriosClick(Sender: TObject);
